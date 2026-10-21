@@ -1,0 +1,14 @@
+{
+  "name": "apollo-agc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive web reconstruction of the Apollo 11 Guidance Computer source code — Comanche 055 (CM) & Luminary 099 (LM)",
+  "scripts": {
+    "build": "node scripts/build-assets.mjs",
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

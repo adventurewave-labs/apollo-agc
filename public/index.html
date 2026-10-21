@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APOLLO/AGC — the code that landed on the Moon</title>
+<meta name="description" content="Interactive reconstruction of the Apollo 11 Guidance Computer source code — Comanche 055 &amp; Luminary 099, browsable, searchable, and tourable.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23071007'/%3E%3Crect x='4' y='4' width='24' height='11' rx='2' fill='none' stroke='%233aff8c' stroke-width='1.5'/%3E%3Ctext x='16' y='13' font-family='monospace' font-size='9' fill='%233aff8c' text-anchor='middle'%3EAGC%3C/text%3E%3Ccircle cx='10' cy='21' r='2' fill='%23ffb347'/%3E%3Ccircle cx='16' cy='21' r='2' fill='%233aff8c'/%3E%3Ccircle cx='22' cy='21' r='2' fill='%23ffb347'/%3E%3Ccircle cx='10' cy='27' r='2' fill='%233aff8c'/%3E%3Ccircle cx='16' cy='27' r='2' fill='%23ffb347'/%3E%3Ccircle cx='22' cy='27' r='2' fill='%233aff8c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="crt" aria-hidden="true"></div>
+<div id="boot" aria-hidden="true"><pre id="bootlog"></pre></div>
+
+<header>
+  <button id="menuBtn" title="files">≡</button>
+  <div id="brand">APOLLO<span class="slash">/</span>AGC<em>the code that landed on the Moon · 20 JUL 1969</em></div>
+  <div id="dsky" title="DSKY — PROG shows the rope revision, NOUN shows your line">
+    <div class="lamp" id="lampComp"><i></i><span>COMP<br>ACTY</span></div>
+    <div class="lamp"><i class="on dim2"></i><span>UPLINK<br>ACTY</span></div>
+    <div class="dnums">
+      <div class="dg"><label>PROG</label><b id="dProg">--</b></div>
+      <div class="dg"><label>VERB</label><b id="dVerb">16</b></div>
+      <div class="dg"><label>NOUN</label><b id="dNoun">--</b></div>
+    </div>
+  </div>
+  <input id="q" type="text" placeholder="search rope memory… (ctrl-k)" autocomplete="off" spellcheck="false" aria-label="search source">
+  <button id="tourBtn" title="guided tour">TOUR ▸</button>
+</header>
+
+<div id="main">
+  <nav id="side">
+    <input id="fileFilter" type="text" placeholder="filter files…" autocomplete="off" spellcheck="false">
+    <div id="tree"></div>
+  </nav>
+  <section id="viewerWrap">
+    <div id="fileHead">
+      <b id="curFile">—</b>
+      <span id="curSub"></span>
+      <span id="curPos"></span>
+      <button id="linkBtn" title="copy permalink">⧉ link</button>
+    </div>
+    <div id="viewer" tabindex="0">
+      <div id="spacer"></div>
+      <div id="lines"></div>
+    </div>
+  </section>
+</div>
+
+<footer id="status"></footer>
+
+<div id="palette" hidden>
+  <div class="phead"><input id="q2" type="text" placeholder="search labels &amp; comments across all files…" autocomplete="off" spellcheck="false"><span id="pstat"></span></div>
+  <div id="presults"></div>
+  <div class="pfoot">↵ open first · esc close · labels ranked first</div>
+</div>
+
+<div id="tourCard" hidden>
+  <div class="thead"><span id="tourStep"></span><button id="tourClose">✕</button></div>
+  <h3 id="tourTitle"></h3>
+  <p id="tourBlurb"></p>
+  <div class="tnav"><button id="tourPrev">◂ prev</button><button id="tourNext">next ▸</button></div>
+</div>
+
+<div id="alarm" hidden>
+  <div class="abox">
+    <div class="adsky"><span><label>PROG</label><b>—</b></span><span><label>VERB</label><b>N/A</b></span></div>
+    <div class="acode" id="alarmCode"></div>
+    <div class="amsg" id="alarmMsg"></div>
+  </div>
+</div>
+
+<div id="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
