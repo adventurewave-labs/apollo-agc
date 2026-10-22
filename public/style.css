@@ -1,4 +1,5 @@
 /* APOLLO/AGC — authentic DSKY + phosphor rope reader */
+[hidden] { display: none !important; } /* author display rules must not resurrect hidden overlays */
 @font-face {
   font-family: 'DSEG7';
   src: url('https://cdn.jsdelivr.net/npm/dseg@0.46.0/fonts/DSEG7-Classic/DSEG7Classic-Bold.woff2') format('woff2');

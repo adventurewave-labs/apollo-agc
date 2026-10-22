@@ -201,7 +201,8 @@ function paintDSKY() {
 }
 function setReg(n, sign, value) {
   $('#r' + n + 's').textContent = sign;
-  seg('#r' + n, String(Math.min(99999, Math.max(0, Math.round(Math.abs(value))))).padStart(5, '0'));
+  const v = Number.isFinite(value) ? Math.min(99999, Math.max(0, Math.round(Math.abs(value)))) : 0;
+  seg('#r' + n, String(v).padStart(5, '0'));
 }
 function setLamp(name, on, green) {
   const el = document.querySelector(`.alamp[data-lamp="${name}"]`);
@@ -281,18 +282,23 @@ const KEYFRAMES = [
   { f: 745, h: 6,     hd: 0,   prog: '66', done: true },
 ];
 function lerpKF(f) {
-  let a = KEYFRAMES[0], b = KEYFRAMES[KEYFRAMES.length - 1];
-  for (let i = 0; i < KEYFRAMES.length - 1; i++) {
-    if (f >= KEYFRAMES[i].f && f <= KEYFRAMES[i + 1].f) { a = KEYFRAMES[i]; b = KEYFRAMES[i + 1]; break; }
+  // telemetry anchors: nearest keyframes around f that actually define h/hd —
+  // event-only keyframes (the 1202s) must not poison the interpolation.
+  let ha = null, hb = null;
+  for (const k of KEYFRAMES) {
+    if (k.h === undefined) continue;
+    if (k.f <= f) ha = k;
+    else if (!hb) hb = k;
   }
-  const span = Math.max(1, b.f - a.f);
-  const t = Math.min(1, Math.max(0, (f - a.f) / span));
+  if (!ha) ha = KEYFRAMES[0];
+  if (!hb) hb = KEYFRAMES[KEYFRAMES.length - 1];
+  const t = Math.min(1, Math.max(0, (f - ha.f) / Math.max(1, hb.f - ha.f)));
   return {
-    h: a.h + (b.h - a.h) * t,
-    hd: a.hd + (b.hd - a.hd) * t,
-    prog: b.prog || a.prog,
-    verb: b.verb || a.verb || '06',
-    noun: b.noun || a.noun || '63',
+    h: ha.h + (hb.h - ha.h) * t,
+    hd: ha.hd + (hb.hd - ha.hd) * t,
+    prog: ha.prog || hb.prog,
+    verb: ha.verb || hb.verb || '06',
+    noun: ha.noun || hb.noun || '63',
   };
 }
 function getClock(f) {
