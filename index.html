@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APOLLO/AGC — the code that landed on the Moon</title>
+<meta name="description" content="Interactive reconstruction of the Apollo 11 Guidance Computer source code — Comanche 055 &amp; Luminary 099 with an authentic DSKY, powered-descent simulation, and a guide to reading the rope.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23071007'/%3E%3Crect x='4' y='4' width='24' height='11' rx='2' fill='none' stroke='%233aff8c' stroke-width='1.5'/%3E%3Ctext x='16' y='13' font-family='monospace' font-size='9' fill='%233aff8c' text-anchor='middle'%3EAGC%3C/text%3E%3Ccircle cx='10' cy='21' r='2' fill='%23ffb347'/%3E%3Ccircle cx='16' cy='21' r='2' fill='%233aff8c'/%3E%3Ccircle cx='22' cy='21' r='2' fill='%23ffb347'/%3E%3Ccircle cx='10' cy='27' r='2' fill='%233aff8c'/%3E%3Ccircle cx='16' cy='27' r='2' fill='%23ffb347'/%3E%3Ccircle cx='22' cy='27' r='2' fill='%233aff8c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="crt" aria-hidden="true"></div>
+<div id="boot" aria-hidden="true"><pre id="bootlog"></pre></div>
+
+<header id="topbar">
+  <button id="menuBtn" title="files">≡</button>
+  <div id="brand">APOLLO<span class="slash">/</span>AGC<em>the code that landed on the Moon · 20 JUL 1969</em></div>
+  <input id="q" type="text" placeholder="search rope memory… (ctrl-k)" autocomplete="off" spellcheck="false" aria-label="search source">
+  <button id="tourBtn" title="guided tour of the famous parts">TOUR ▸</button>
+  <button id="helpBtn" title="how to read the code">? HELP</button>
+</header>
+
+<section id="dskyPanel">
+  <div id="dskyFrame">
+    <div class="dsky-left">
+      <div class="lampgrid">
+        <div class="alamp" data-lamp="uplink"><i></i><span>UPLINK<br>ACTY</span></div>
+        <div class="alamp" data-lamp="temp"><i></i><span>TEMP</span></div>
+        <div class="alamp" data-lamp="noatt"><i></i><span>NO<br>ATT</span></div>
+        <div class="alamp" data-lamp="gimbal"><i></i><span>GIMBAL<br>LOCK</span></div>
+        <div class="alamp" data-lamp="prog"><i></i><span>PROG</span></div>
+        <div class="alamp" data-lamp="restart"><i></i><span>RESTART</span></div>
+        <div class="alamp" data-lamp="keyrel"><i></i><span>KEY<br>REL</span></div>
+        <div class="alamp" data-lamp="oprerr"><i></i><span>OPR<br>ERR</span></div>
+      </div>
+      <div class="plate-note">APOLLO GUIDANCE<br>COMPUTER · DSKY BLOCK II</div>
+    </div>
+    <div class="dsky-right">
+      <div class="dsky-displays">
+        <div class="displayRow">
+          <div class="dfield"><label>PROG</label><div class="seg two" id="dProg">00</div></div>
+          <div class="dfield"><label>VERB</label><div class="seg two" id="dVerb">16</div></div>
+          <div class="dfield"><label>NOUN</label><div class="seg three" id="dNoun">63</div></div>
+          <div class="dfield compacty"><label>COMP<br>ACTY</label><div class="clight"><i id="compLamp"></i></div></div>
+        </div>
+        <div class="regRow"><label>R1</label><span class="sign" id="r1s">+</span><div class="seg five" id="r1">00000</div></div>
+        <div class="regRow"><label>R2</label><span class="sign" id="r2s">+</span><div class="seg five" id="r2">00000</div></div>
+        <div class="regRow"><label>R3</label><span class="sign" id="r3s">+</span><div class="seg five" id="r3">00000</div></div>
+      </div>
+      <div class="dsky-keys" id="keys">
+        <button data-key="VERB" class="fn wide">VERB</button><button data-key="PLUS" class="fn">+</button><button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
+        <button data-key="NOUN" class="fn wide">NOUN</button><button data-key="MINUS" class="fn">−</button><button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
+        <button data-key="CLR" class="fn wide">CLR</button><button data-key="0">0</button><button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
+        <button data-key="KEYREL" class="fn w2">KEY REL</button><button data-key="PRO" class="fn pro">PRO</button><button data-key="ENTR" class="fn entr w2">ENTR</button>
+      </div>
+    </div>
+  </div>
+  <div id="simBar">
+    <button id="simBtn">▶ RUN P63 POWERED DESCENT</button>
+    <span id="simNote">DSKY idle in program 00. Click any opcode in the listing for what it means. PRO (or the button) flies the landing.</span>
+    <button id="dskyHide" title="collapse DSKY">▾</button>
+  </div>
+</section>
+
+<div id="main">
+  <nav id="side">
+    <input id="fileFilter" type="text" placeholder="filter files…" autocomplete="off" spellcheck="false">
+    <div id="tree"></div>
+  </nav>
+  <section id="viewerWrap">
+    <div id="fileHead">
+      <b id="curFile">—</b>
+      <span id="curSub"></span>
+      <span id="curPos"></span>
+      <button id="linkBtn" title="copy permalink">⧉ link</button>
+    </div>
+    <div id="viewer" tabindex="0">
+      <div id="spacer"></div>
+      <div id="lines"></div>
+    </div>
+  </section>
+</div>
+
+<footer id="status"></footer>
+
+<div id="palette" hidden>
+  <div class="phead"><input id="q2" type="text" placeholder="search labels &amp; comments across all files…" autocomplete="off" spellcheck="false"><span id="pstat"></span></div>
+  <div id="presults"></div>
+  <div class="pfoot">↵ open first · esc close · labels ranked first</div>
+</div>
+
+<div id="tourCard" hidden>
+  <div class="thead"><span id="tourStep"></span><button id="tourClose">✕</button></div>
+  <h3 id="tourTitle"></h3>
+  <p id="tourBlurb"></p>
+  <div class="tnav"><button id="tourPrev">◂ prev</button><button id="tourNext">next ▸</button></div>
+</div>
+
+<div id="help" hidden>
+  <div class="hbox">
+    <div class="hhead"><b>HOW TO READ THE ROPE</b><button id="helpClose">✕</button></div>
+    <div id="helpBody"></div>
+  </div>
+</div>
+
+<div id="alarm" hidden>
+  <div class="abox">
+    <div class="adsky"><span><label>PROG</label><b>—</b></span><span><label>VERB</label><b>N/A</b></span></div>
+    <div class="acode" id="alarmCode"></div>
+    <div class="amsg" id="alarmMsg"></div>
+  </div>
+</div>
+
+<div id="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
