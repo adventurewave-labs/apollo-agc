@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/banner.svg" alt="apollo-agc — animated banner" width="100%"></p>
+
 # APOLLO/AGC
 
 > The code that landed on the Moon — reconstructed as an interactive page with a working DSKY.
